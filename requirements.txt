@@ -8,3 +8,4 @@ sys
 validators
 coverage
 pytest-cov
+collections

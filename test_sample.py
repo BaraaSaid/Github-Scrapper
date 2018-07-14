@@ -1,6 +1,7 @@
 import Github_crawler
 import pytest
 import validators
+from collections import OrderedDict
 
 def test_random_choice():
     cities = ['Tunis', 'Ariana', 'Sfax', 'Sousse']
@@ -66,6 +67,9 @@ def test_find_url_repositories():
     soup = Github_crawler.parse_html(resp)
     urls = Github_crawler.find_url(soup, 'Repositories', {'http':'13.78.125.167:8080'})
     for url in urls :
+        assert type(url) == OrderedDict
+        assert len(url) == 2
+        assert set(url.keys()) == {'extra', 'url'}
         assert validators.url(url['url'])
     
 
@@ -114,7 +118,19 @@ def test_output_json_object():
     list_test = [{'test':'valid'},{'function':'output_json_object'}]
     assert Github_crawler.output_json_object(list_test) == json_test
 
-
+def test_extra_crawling():
+    proxy_dict = {'http' : '213.222.34.200:53281', 'https' : '213.222.34.200:53281'}
+    url_repo = "https://github.com/atuldjadhav/DropBox-Cloud-Storage"
+    extra_dict = Github_crawler.extra_crawling(url_repo, proxy_dict)
+    keys = extra_dict.keys()
+    assert type(extra_dict) == OrderedDict
+    assert len(extra_dict) == 2 
+    assert set(keys) == {'owner', 'language_stats'}
+    assert type(extra_dict['language_stats']) == OrderedDict
+    for key in extra_dict['language_stats'] :
+        assert (type(key) == str and type(extra_dict['language_stats'][key]) == float \
+        and (extra_dict['language_stats'][key] > 0) and\
+        (extra_dict['language_stats'][key] <= 100)) == True
 
 def test_main():
     with open('test_file', 'w') as input_file :

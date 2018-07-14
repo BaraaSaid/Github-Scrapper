@@ -166,6 +166,8 @@ def extra_crawling(url_repo, proxy_dict):
     for i in range(len(lang_values)) :
         lang_value = lang_values[i].text
         lang_stat = lang_stats[i].text
+        lang_stat = lang_stat[:-1]
+        lang_stat = float(lang_stat)
         languages_dict[lang_value] = lang_stat
     extra_dict["language_stats"] = languages_dict
     
