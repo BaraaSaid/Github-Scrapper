@@ -6,6 +6,7 @@ import json
 import pprint
 import random 
 import sys
+from collections import OrderedDict
 
 basic_url = "https://github.com"
 protcol_type = ['http', 'https']
@@ -95,7 +96,7 @@ def parse_html(resp):
     except Exception as err:
         raise Exception(str(err))
 
-def find_url(soup, github_menu_item):
+def find_url(soup, github_menu_item, proxy_dict):
     """
     returns a list of dictionaries mapping the urls associated with the keywords and the github
     menu item given in the json input file. 
@@ -106,8 +107,10 @@ def find_url(soup, github_menu_item):
     if github_menu_item == 'repositories' :
         repositories = soup.select('ul.repo-list > div > div > h3 > a')
         for repository in repositories :
-            url_dict = {}
-            url_dict["url"] = basic_url + repository['href']
+            url_dict = OrderedDict()
+            url_repo = basic_url + repository['href']
+            url_dict["url"] = url_repo
+            url_dict["extra"] = extra_crawling(url_repo, proxy_dict)
             url_list.append(url_dict)
         return url_list
     
@@ -147,13 +150,33 @@ def is_argument_missing(arguments):
     if arguments < 2 :
         raise Exception('Missing arguments , at least 1 required argument ')
 
+def extra_crawling(url_repo, proxy_dict):
+    
+    extra_dict = OrderedDict()
+    resp_extra = request_url(url_repo, proxy_dict)
+    soup_extra = BeautifulSoup(resp_extra.text, "lxml")
+    owner_list = soup_extra.select('div.commit-tease.js-details-container.Details.d-flex div.flex-auto.f6.no-wrap.mr-3 span.commit-author.user-mention')
+    owner = owner_list[0].text
+    extra_dict["owner"] = owner
+    lang_values = soup_extra.select('ol.repository-lang-stats-numbers li a \
+    span.lang')
+    lang_stats = soup_extra.select('ol.repository-lang-stats-numbers li a \
+    span.percent')
+    languages_dict = OrderedDict()
+    for i in range(len(lang_values)) :
+        lang_value = lang_values[i].text
+        lang_stat = lang_stats[i].text
+        languages_dict[lang_value] = lang_stat
+    extra_dict["language_stats"] = languages_dict
+    
+    return extra_dict
 def crawl_website(data):
     url = construct_search_url(data)
     proxy_dict = create_proxy(data)
     resp = request_url(url, proxy_dict)
     soup = parse_html(resp)
     github_menu_item = parse_data(data, 'type')
-    url_list = find_url(soup, github_menu_item)
+    url_list = find_url(soup, github_menu_item, proxy_dict)
 
     return url_list
    

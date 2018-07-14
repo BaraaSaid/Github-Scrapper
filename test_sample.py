@@ -64,7 +64,7 @@ def test_find_url_repositories():
     resp = Github_crawler.request_url("https://github.com/search?q=openstack+nova+css\
     &type=Repositories", {'http':'13.78.125.167:8080'})
     soup = Github_crawler.parse_html(resp)
-    urls = Github_crawler.find_url(soup, 'Repositories')
+    urls = Github_crawler.find_url(soup, 'Repositories', {'http':'13.78.125.167:8080'})
     for url in urls :
         assert validators.url(url['url'])
     
@@ -73,7 +73,7 @@ def test_find_url_issues():
     resp = Github_crawler.request_url("https://github.com/search?q=openstack+nova+css\
     &type=Issues", {'http':'13.78.125.167:8080'})
     soup = Github_crawler.parse_html(resp)
-    urls = Github_crawler.find_url(soup, 'Issues')
+    urls = Github_crawler.find_url(soup, 'Issues', {'http':'13.78.125.167:8080'})
     for url in urls :
         assert validators.url(url['url'])
     
@@ -82,7 +82,7 @@ def test_find_url_wikis():
     resp = Github_crawler.request_url("https://github.com/search?q=openstack+nova+css\
     &type=Wikis", {'http':'13.78.125.167:8080'})
     soup = Github_crawler.parse_html(resp)
-    urls = Github_crawler.find_url(soup, 'Wikis')
+    urls = Github_crawler.find_url(soup, 'Wikis', {'http':'13.78.125.167:8080'})
     for url in urls :
         assert validators.url(url['url'])
     
@@ -123,7 +123,6 @@ def test_main():
     "type": "Repositories"}')
     input_data = Github_crawler.read_json('test_file')
     url_list = Github_crawler.crawl_website(input_data)
-    #json_url_list = Github_crawler.output_json_object(url_list)
     for url in  url_list :
         assert validators.url(url['url'])
 
