@@ -1,5 +1,6 @@
 # Github-Scrapper
 - The GitHub crawler returns all the links related to a github search given specific search terms, list of proxies and the type of the object we're looking for (Repositories, Issues and Wikis).
+- When the type of the github menu item is Repositories, we will also return the owner of the repository as well as the statistics of the used programming language.
 
 # Overview
 
@@ -74,10 +75,5 @@ py.test --cov=. . --cov-report html
 # Reference
 Find more details about the requirements here :
 [https://confluence.rdpnts.com/display/IKB/Python+developer+technical+task]
-
-# Remark
-
-In this implementation we considered returning only the links related to the search terms. But we can easily extend it to return also the owner of the projects and the stats of the use of the programming language.
-
 
 
