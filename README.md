@@ -1,4 +1,4 @@
-# Github-Scrapper
+# Github-Scraper
 - The GitHub crawler returns all the links related to a github search given specific search terms, list of proxies and the type of the object we're looking for (Repositories, Issues and Wikis).
 - When the type of the github menu item is Repositories, we will also return the owner of the repository as well as the statistics of the used programming language.
 
